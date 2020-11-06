@@ -39,7 +39,7 @@ A passphrase is generated from username/password combination according to the fo
 	<li>The resulting array is used as a word index for building the passphrase.</li>
 </ol>
 <p>The recovery of the username and the password is done in the reversed sequence.</p>
-<p>The way of identifying yourself using username/password combination is intended for those to prefer a traditional way over using long seeds. If a username/password combination is chosen properly, it should provide a similar level of security.</p>
+<p>The way of identifying yourself using username/password combination is intended for those who prefer a traditional way over using long seeds. If a username/password combination is chosen properly, it should provide a similar level of security.</p>
 <p>It is important to note that, while the username is intended to be public, neither the password nor the passphrase are meant to be leaving your PC. The generated passphrase should be used to generate a public/private key pair with <code>keyPairFromSeed()</code> function.</p>
 <p>The 31 character limit of username + password combination can be extended if needed. As AES works with 16-byte blocks, the length of a padded input string needs to be a multiple of 16 (this includes at least one zero separator). Here are the length of passphrases that can be generated from inputs with different lengths:</p>
 <table>
