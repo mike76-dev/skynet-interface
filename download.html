@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+
+	<title>Download Demo</title>
+
+	<script src="main.js"></script>
+
+</head>
+
+<body>
+
+	<label for="skylink">Enter skylink:</label>
+
+	<input type="text" id="skylink">
+
+	<input type="button" onclick="load()" value="Load"><br>
+
+	<textarea id="textarea" rows="10" columns="80" readonly></textarea><br>
+
+	<input type="text" id="name" readonly>
+
+	<script>
+
+		async function load() {
+
+			let response = await window.downloadText(document.getElementById('skylink').value);
+
+			document.getElementById('textarea').value = response.text;
+
+			document.getElementById('name').value = response.name;
+
+		}
+
+	</script>
+
+</body>
+
+</html>

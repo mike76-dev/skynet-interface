@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Upload Demo</title>
+
+	<script src="main.js"></script>
+
+</head>
+
+<body>
+
+	<label for="name">Enter file name:</label>
+
+	<input type="text" id="name"><br>
+
+	<label for="textarea">Input some text:</label><br>
+
+	<textarea id="textarea" rows="10" columns="80"></textarea><br>
+
+	<input type="button" onclick="upload()" value="Upload"><br>
+
+	<p id="skylink"></p>
+
+	<script>
+
+		async function upload() {
+
+			let text = document.getElementById('textarea').value;
+
+			let name = document.getElementById('name').value;
+
+			let skylink = await window.uploadText(text, name);
+
+			document.getElementById('skylink').innerHTML = '<a href="https://siasky.net/' + skylink + '">Skylink</a>';
+
+		}
+
+	</script>
+
+</body>
+
+</html>

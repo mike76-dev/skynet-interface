@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+
+	<title>Registry Demo</title>
+
+	<script src="main.js"></script>
+
+</head>
+
+<body>
+
+	<p>
+
+		<label for="input">Type in some text:</label>
+
+		<input type="text" id="input">
+
+		<input type="button" onclick="storeData()" value="Store">
+
+	</p>
+
+	<p>
+
+		<label for="output">This is your data:</label>
+
+		<input type="text" id="output" readonly>
+
+		<input type="button" onclick="loadData()" value="Load">
+
+	</p>
+
+	<script>
+
+		const seed = 'Some more or less secure seed';
+
+		const datakey = 'myApp';
+
+		let input = document.getElementById('input');
+
+		let output = document.getElementById('output');
+
+		async function storeData() {
+
+			await window.toRegistry(seed, datakey, input.value);
+
+		}
+		async function loadData() {
+			output.value = await window.fromRegistry(seed, datakey);
+		}
+	</script>
+
+</body>
+
+</html>
