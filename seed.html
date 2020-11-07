@@ -1,103 +1,53 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
 	<meta charset="utf-8">
-
 	<title>Generate Seed Demo</title>
-
 	<script src="main.js"></script>
-
 </head>
-
 <body>
-
 	<input type="text" id="login" placeholder="login">
-
 	<input type="text" id="password" placeholder="password">
-
 	<button onclick="generate()">Generate Seed</button>
-
 	<button onclick="recover()">Recover Login/Password</button>
-
 	<p>Here is your seed:&nbsp;&nbsp;<span id="seed" style="color: #00af00"></span></p>
-
 	<script>
-
+		const appId = 'myApp';
 		function check() {
-
 			let l = document.getElementById('login').value;
-
 			let p = document.getElementById('password').value;
-
 			if (l.length == 0) {
-
 				alert('Login needs to be not empty');
-
 				return false;
-
 			}
-
 			if (p.length < 6) {
-
 				alert('Password needs to be minimum 6 characters');
-
 				return false;
-
 			}
-
 			if (l.length + p.length > 31) {
-
 				alert('Login and Password together need to be maximum 31 character');
-
 				return false;
-
 			}
-
 			return true;
-
 		}
-
 		async function generate() {
-
 			if (!check()) {
-
 				return false;
-
 			}
-
 			document.getElementById('seed').innerText = await window.generateSeed(
-
 				document.getElementById('login').value,
-
-				document.getElementById('password').value);
-
+				document.getElementById('password').value, appId);
 			document.getElementById('login').value = '';
-
 			document.getElementById('password').value = '';
-
 		}
-
 		async function recover() {
-
 			if (document.getElementById('seed').innerText == '') {
-
 				return false;
-
 			}
-
-			const {login, password} = await window.recoverPassword(document.getElementById('seed').innerText);
-
+			const {login, password} = await window.recoverPassword(document.getElementById('seed').innerText, appId);
 			document.getElementById('login').value = login;
-
 			document.getElementById('password').value = password;
-
 		}
-
 	</script>
-
 </body>
-
 </html>
