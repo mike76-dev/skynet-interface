@@ -64,6 +64,6 @@ A passphrase is generated from username/password combination according to the fo
 		<td>47 words</td>
 	</tr>
 </table>
-<p>The AES key and CBC-mode initialization vector are currently hardcoded. It is possible, however, to produce the key and/or the IV another way, e.g. derive them from <code>appId</code>.</p>
+<p>The AES key and CBC-mode initialization vector are derived from <code>appId</code>.</p>
 <p>Needless to say that, like in normal username/password selection, a user needs to choose a strong password. However, it is currently possible that the same username can be chosen by different users (as long as their passwords are different). This could be prevented, for example, by keeping a registry of all occupied usernames.</p>
 <p>The username and the password are easily recoverable from the passphrase if they are forgotten.</p>
