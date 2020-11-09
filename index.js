@@ -1,6 +1,7 @@
 var crypto = require('./crypto');
 var skynet = require('./skynet');
 var words = require('./words');
+var keydb = require('./keydb');
 
 window.toRegistry = async function(seed, datakey, data) {
 	const {publicKey, privateKey} = crypto.keyPairFromSeed(seed);
@@ -34,4 +35,24 @@ window.generateSeed = async function(login, password, appId) {
 
 window.recoverPassword = async function(seed, appId) {
 	return await crypto.recoverPassword(seed, appId);
+}
+
+window.appendKey = async function(key, skylink, appId) {
+	return await keydb.appendKey(key, skylink, appId);
+}
+
+window.appendRegistryKey = async function(key, appId) {
+	return await keydb.appendRegistryKey(key, appId);
+}
+
+window.setDefaultPortal = function(portal) {
+	skynet.setDefaultPortal(portal);
+}
+
+window.setDefaultTimeout = function(t) {
+	skynet.setDefaultTimeout(t);
+}
+
+window.createAppId = function(appId) {
+	return keydb.createAppId(appId);
 }

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>KeyDB Demo</title>
+	<script src="main.js"></script>
+</head>
+<body>
+	<h1>KeyDB Demo</h1>
+	<p>
+		<label for="app-name">What is your app's name (max. 15 characters)?</label><br>
+		<input type="text" id="app-name" maxlength="15">
+		<button onclick="generateAppId()">Generate unique AppID</button>
+	</p>
+	<p>
+		<label for="app-ID">This is your AppID:</label><br>
+		<input type="text" id="app-ID" size="40" readonly>
+	</p>
+	<hr>
+	<p>
+		<label for="key">Enter new username:</label>
+		<input type="text" id="key" maxlength="31">
+		<button id="sign-up" onclick="enterKey()">Sign up</button>
+	</p>
+	<p id="result"></p>
+	<script>
+		window.setDefaultPortal('https://skyportal.xyz');
+		window.setDefaultTimeout(3000);
+		const res = document.getElementById('result');
+		function generateAppId() {
+			const name = document.getElementById('app-name').value;
+			if (name == '') { return; }
+			document.getElementById('app-ID').value = window.createAppId(name);
+			document.getElementById('key').value = '';
+			document.getElementById('result').innerText = '';
+		}
+		async function enterKey() {
+			const appId = document.getElementById('app-ID').value;
+			const key = document.getElementById('key').value;
+			if ((appId == '') || (key == '')) { return; }
+			document.getElementById('sign-up').innerText = '...';
+			document.getElementById('sign-up').disabled = true;
+			const result = await window.appendRegistryKey(key, appId);
+			if (result) {
+				res.style.color = '#00af00';
+				res.innerText = 'New user added successfully!';
+			} else {
+				res.style.color = '#af0000';
+				res.innerText = 'This user name is already occupied.';
+			}
+			document.getElementById('sign-up').innerText = 'Sign up';
+			document.getElementById('sign-up').disabled = false;
+		}
+	</script>
+</body>
+</html>
