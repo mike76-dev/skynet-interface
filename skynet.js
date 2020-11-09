@@ -5,8 +5,15 @@ var nf = require('node-forge');
 // default Skynet portal
 var defaultPortal = 'https://siasky.net';
 
+// default timeout value = 5s
+var defaultTimeout = 5000;
+
 export function setDefaultPortal(portal) {
 	defaultPortal = portal;
+}
+
+export function setDefaultTimeout(t) {
+	defaultTimeout = t;
 }
 
 // core function for interacting with Skynet
@@ -17,7 +24,7 @@ function executeRequest(method, link, data, options = {}) {
 		if (options && options.timeout) {
 			req.timeout = options.timeout;
 		} else {
-			req.timeout = 5000;
+			req.timeout = defaultTimeout;
 		}
 		if (options && options.onUploadProgress) {
 			req.upload.onprogress = options.onUploadProgress;

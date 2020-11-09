@@ -23,6 +23,10 @@ This repository includes a few JavaScript files that can help building browser a
 		<td><b>main.js</b></td>
 		<td>Javascript file precompiled with <code>npx webpack</code>. It can be referenced within a html file.</td>
 	</tr>
+	<tr>
+		<td><b>keydb.js</b></td>
+		<td>Functions, which check if the given key already exists in the database, and, if not, append that key. The database is stored on Skynet and accessed via Registry.</td>
+	</tr>
 </table>
 
 # Some notes on security
@@ -67,3 +71,7 @@ A passphrase is generated from username/password combination according to the fo
 <p>The AES key and CBC-mode initialization vector are derived from <code>appId</code>.</p>
 <p>Needless to say that, like in normal username/password selection, a user needs to choose a strong password. However, it is currently possible that the same username can be chosen by different users (as long as their passwords are different). This could be prevented, for example, by keeping a registry of all occupied usernames.</p>
 <p>The username and the password are easily recoverable from the passphrase if they are forgotten.</p>
+
+# About <code>appId</code>
+<p>If you want your app to keep some own data stored on Skynet, then your app needs to have own public/private keys. These can be generated from <code>appId</code>. This means that an <code>appId</code> must be reasonably long to guarantee that there is no other app out there having the same <code>appId</code>.</p>
+<p>However, currently there is no way that a Skapp could have its own private data not accessible by the user of this Skapp. This should be kept in mind when assessing the importance of privacy.</p>
