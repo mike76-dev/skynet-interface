@@ -152,6 +152,9 @@ export async function recoverPassword(seed, appId) {
 	const aesIV = new Uint8Array(16);
 	aesIV.set(stringToUint8Array(appId).slice(0, 16));
 	const num = await words.getNumbers(seed);
+	if (!num) {
+		return { login: null, password: null };
+	}
 	const enc = from24To32(num);
 	const aesCbc = new aes.ModeOfOperation.cbc(aesKey, aesIV);
 	const output = aesCbc.decrypt(enc);
