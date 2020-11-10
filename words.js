@@ -23,8 +23,18 @@ export async function getNumbers(phrase) {
 		let lines = text.text.split('\n');
 		let words = phrase.split(' ');
 		let result = new Array(words.length);
-		words.forEach((w, i) => {result[i] = lines.indexOf(words[i])});
-		return result;
+		let b = true;
+		let n;
+		words.forEach((w, i) => {
+			n = lines.indexOf(words[i]);
+			if (n < 0) b = false;
+			result[i] = n;
+		});
+		if (b) {
+			return result;
+		} else {
+			return null;
+		}
 	} else {
 		return null;
 	}
