@@ -40,13 +40,18 @@
 			if ((appId == '') || (key == '')) { return; }
 			document.getElementById('sign-up').innerText = '...';
 			document.getElementById('sign-up').disabled = true;
-			const result = await window.appendRegistryKey(key, appId);
-			if (result) {
-				res.style.color = '#00af00';
-				res.innerText = 'New user added successfully!';
-			} else {
+			if (await window.keyExists(key, appId)) {
 				res.style.color = '#af0000';
 				res.innerText = 'This user name is already occupied.';
+			}	else {
+				const result = await window.appendRegistryKey(key, appId);
+				if (result) {
+					res.style.color = '#00af00';
+					res.innerText = 'New user added successfully!';
+				} else {
+					res.style.color = '#af0000';
+					res.innerText = 'Error adding user!';
+				}
 			}
 			document.getElementById('sign-up').innerText = 'Sign up';
 			document.getElementById('sign-up').disabled = false;
