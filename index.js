@@ -56,3 +56,7 @@ window.setDefaultTimeout = function(t) {
 window.createAppId = function(appId) {
 	return keydb.createAppId(appId);
 }
+
+window.keyExists = async function(key, appId) {
+	return await keydb.keyExists(key, appId);
+}

@@ -65,6 +65,37 @@ export async function appendRegistryKey(key, appId) {
 	}
 }
 
+// check if the key exists in the database
+export async function keyExists(key, appId) {
+	const seed = buffer.Buffer.from(crypto.HashDataKey(appId)).toString('hex');
+	const {publicKey, privateKey} = crypto.keyPairFromSeed(seed);
+	const entry = await skynet.getEntry(publicKey, appId);
+	let result = false;
+	if (entry) {
+		const database = await skynet.downloadText(entry.entry.data);
+		if (!database) {
+			throw new Error('Could not locate database');
+		}
+		let text = database.text.slice(database.text.indexOf('{') + 1, database.text.indexOf('}'));
+		const aesKey = crypto.HashDataKey(appId);
+		let aesCtr = new aes.ModeOfOperation.ctr(aesKey);
+		let decrypted;
+		let keys;
+		if (text.length > 0) {
+			decrypted = aes.utils.utf8.fromBytes(aesCtr.decrypt(base64.Base64.toUint8Array(text)));
+			if (decrypted.indexOf(',') < 0) {
+				keys = [decrypted];
+			} else {
+				keys = decrypted.split(',');
+			}
+			if (keys.includes(key)) {
+				result = true;
+			}
+		}
+	}
+	return result;
+}
+
 // create a unique appId
 // this function should be used only once for each app
 export function createAppId(appId) {
