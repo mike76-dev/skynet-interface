@@ -11,29 +11,18 @@ export async function appendKey(key, skylink, appId) {
 	if (!database) {
 		throw new Error('Could not locate database');
 	}
-	let text = database.text.slice(database.text.indexOf('{') + 1, database.text.indexOf('}'));
-	const aesKey = crypto.HashDataKey(appId);
-	let aesCtr = new aes.ModeOfOperation.ctr(aesKey);
-	let decrypted;
-	let keys;
-	if (text.length == 0) {
-		keys = [];
-	} else {	
-		decrypted = aes.utils.utf8.fromBytes(aesCtr.decrypt(base64.Base64.toUint8Array(text)));
-		if (decrypted.indexOf(',') < 0) {
-			keys = [decrypted];
-		} else {
-			keys = decrypted.split(',');
-		}
-	}
-	if (keys.includes(key)) {
-		return '';
-	}
-	keys.push(key);
-	decrypted = keys.toString();
-	aesCtr = new aes.ModeOfOperation.ctr(aesKey);
-	let newDatabase = aesCtr.encrypt(aes.utils.utf8.toBytes(decrypted));
-	newDatabase = '{' + base64.Base64.fromUint8Array(newDatabase) + '}';
+	const input = new Uint8Array(32);
+	input.set(crypto.stringToUint8Array('{' + key + '}').slice(0, 32));
+	const oldDB = base64.Base64.toUint8Array(
+		database.text.slice(database.text.indexOf('{') + 1, database.text.indexOf('}'))
+	);
+	const aesKey = crypto.HashAll(crypto.encodeString(appId), crypto.encodeString(key));
+	const aesEcb = new aes.ModeOfOperation.ecb(aesKey);
+	const encrypted = aesEcb.encrypt(input);
+	const newDB = new Uint8Array(oldDB.length + encrypted.length);
+	newDB.set(oldDB);
+	newDB.set(encrypted, oldDB.length);
+	const newDatabase = '{' + base64.Base64.fromUint8Array(newDB) + '}';
 	return await skynet.uploadText(newDatabase, database.name);
 }
 
@@ -70,30 +59,22 @@ export async function keyExists(key, appId) {
 	const seed = buffer.Buffer.from(crypto.HashDataKey(appId)).toString('hex');
 	const {publicKey, privateKey} = crypto.keyPairFromSeed(seed);
 	const entry = await skynet.getEntry(publicKey, appId);
-	let result = false;
 	if (entry) {
 		const database = await skynet.downloadText(entry.entry.data);
 		if (!database) {
 			throw new Error('Could not locate database');
 		}
 		let text = database.text.slice(database.text.indexOf('{') + 1, database.text.indexOf('}'));
-		const aesKey = crypto.HashDataKey(appId);
-		let aesCtr = new aes.ModeOfOperation.ctr(aesKey);
-		let decrypted;
-		let keys;
+		const aesKey = crypto.HashAll(crypto.encodeString(appId), crypto.encodeString(key));
+		const aesEcb = new aes.ModeOfOperation.ecb(aesKey);
 		if (text.length > 0) {
-			decrypted = aes.utils.utf8.fromBytes(aesCtr.decrypt(base64.Base64.toUint8Array(text)));
-			if (decrypted.indexOf(',') < 0) {
-				keys = [decrypted];
-			} else {
-				keys = decrypted.split(',');
-			}
-			if (keys.includes(key)) {
-				result = true;
+			const decrypted = aes.utils.utf8.fromBytes(aesEcb.decrypt(base64.Base64.toUint8Array(text)));
+			if (decrypted.indexOf(key) >= 0) {
+				return true;
 			}
 		}
 	}
-	return result;
+	return false;
 }
 
 // create a unique appId
