@@ -3,6 +3,7 @@ var buffer = require('buffer');
 var nf = require('node-forge');
 var words = require('./words');
 var aes = require('aes-js');
+var base64 = require('js-base64');
 
 // functions for interaction with SKynet registry
 function NewHash() {
@@ -39,7 +40,7 @@ function encodeNumber(num) {
 	return encoded;
 }
 
-function encodeString(str) {
+export function encodeString(str) {
 	const encoded = new Uint8Array(8 + str.length);
 	encoded.set(encodeNumber(str.length));
 	encoded.set(stringToUint8Array(str), 8);
@@ -152,9 +153,6 @@ export async function recoverPassword(seed, appId) {
 	const aesIV = new Uint8Array(16);
 	aesIV.set(stringToUint8Array(appId).slice(0, 16));
 	const num = await words.getNumbers(seed);
-	if (!num) {
-		return { login: null, password: null };
-	}
 	const enc = from24To32(num);
 	const aesCbc = new aes.ModeOfOperation.cbc(aesKey, aesIV);
 	const output = aesCbc.decrypt(enc);
