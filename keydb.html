@@ -22,17 +22,33 @@
 		<input type="text" id="key" maxlength="31">
 		<button id="sign-up" onclick="enterKey()">Sign up</button>
 	</p>
-	<p id="result"></p>
+	<p id="result" style="visibility: hidden">placeholder</p>
+	<hr>
+	<p>Note: Adding first user takes much longer, because the database needs to be created.</p>
+	<p>If you experience errors, try increasing the timeout value (ms):</p>
+	<input type="number" id="timeout" value="3000">
+	<button onclick="setTimeout()">Set</button>
+	<p>Be careful, though: if you set this value too high, your request will take forever!</p>
 	<script>
 		window.setDefaultPortal('https://skyportal.xyz');
-		window.setDefaultTimeout(3000);
+		window.setDefaultTimeout(3000); var to = 3000;
 		const res = document.getElementById('result');
+		function setTimeout() {
+			const t = document.getElementById('timeout').value;
+			if (t <= 0) {
+				document.getElementById('timeout').value = to;
+				return;
+			}
+			window.setDefaultTimeout(t);
+			to = t;
+		}
 		function generateAppId() {
 			const name = document.getElementById('app-name').value;
 			if (name == '') { return; }
 			document.getElementById('app-ID').value = window.createAppId(name);
 			document.getElementById('key').value = '';
-			document.getElementById('result').innerText = '';
+			res.style.visibility = 'hidden';
+			res.innerText = 'placeholder';
 		}
 		async function enterKey() {
 			const appId = document.getElementById('app-ID').value;
@@ -40,17 +56,41 @@
 			if ((appId == '') || (key == '')) { return; }
 			document.getElementById('sign-up').innerText = '...';
 			document.getElementById('sign-up').disabled = true;
-			if (await window.keyExists(key, appId)) {
+			res.style.visibility = 'hidden';
+			let exists, result;
+			try {
+				exists = await window.keyExists(key, appId);
+			}	catch (error) {
+				res.style.color = '#af0000';
+				res.innerText = 'Error adding user!';
+				res.style.visibility = 'visible';
+				document.getElementById('sign-up').innerText = 'Sign up';
+				document.getElementById('sign-up').disabled = false;
+				return;
+			};
+			if (exists) {
 				res.style.color = '#af0000';
 				res.innerText = 'This user name is already occupied.';
+				res.style.visibility = 'visible';
 			}	else {
-				const result = await window.appendRegistryKey(key, appId);
+				try {
+					result = await window.appendRegistryKey(key, appId);
+				}	catch (error) {
+					res.style.color = '#af0000';
+					res.innerText = 'Error adding user!';
+					res.style.visibility = 'visible';
+					document.getElementById('sign-up').innerText = 'Sign up';
+					document.getElementById('sign-up').disabled = false;
+					return;
+				};
 				if (result) {
 					res.style.color = '#00af00';
 					res.innerText = 'New user added successfully!';
+					res.style.visibility = 'visible';
 				} else {
 					res.style.color = '#af0000';
 					res.innerText = 'Error adding user!';
+					res.style.visibility = 'visible';
 				}
 			}
 			document.getElementById('sign-up').innerText = 'Sign up';
